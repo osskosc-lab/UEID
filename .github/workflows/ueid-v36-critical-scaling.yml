@@ -9,6 +9,13 @@ on:
       - 'UEID-v3.6/**'
       - 'requirements.txt'
       - '.github/workflows/ueid-v36-critical-scaling.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'UEID-v3.6/**'
+      - 'requirements.txt'
+      - '.github/workflows/ueid-v36-critical-scaling.yml'
 
 jobs:
   pilot:
