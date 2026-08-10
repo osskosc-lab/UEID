@@ -1,0 +1,33 @@
+{
+  "title": "UEID v3.6 Critical Scaling Engine v0.1",
+  "status": "frozen computational design",
+  "primary_endpoint": "principal susceptibility lambda_max(sym(chi_total))",
+  "candidate_ness_notice": "The lag-integrated correction is a candidate response diagnostic and is not claimed to be a GENERIC/FDT theorem.",
+  "order_parameters": {
+    "node": "Kuramoto |mean exp(i theta)|",
+    "edge": "lambda_max(W) / sum_i |lambda_i(W)|",
+    "geometry": "|mean AF3| / (|mean AF3| + sd(AF3))"
+  },
+  "confirmatory_grid": {
+    "N": [128, 256, 512, 1024, 2048],
+    "g": "0.50 to 1.50 by 0.02 (51 values)",
+    "seeds": 30,
+    "total_runs": 7650
+  },
+  "pilot_grid": {
+    "N": [64, 100, 144, 196, 256],
+    "g": "15 equally spaced values from 0.50 to 1.50",
+    "seeds": 5,
+    "total_runs": 375
+  },
+  "pilot_gates": {
+    "chi_peak_grows_with_N": "FSS slope > 0.05",
+    "loglog_fss": "R2 >= 0.80",
+    "dynamic_dimension_changes": "max(|corr(d_info,g)|, |corr(d_info,kappa)|) >= 0.20",
+    "candidate_ness_nontrivial": "mean ||chi_NESS||_F / ||chi_eq||_F >= 0.05",
+    "multiplex_beats_scalar": "FSS R2 improves by >= 0.02 over node-only",
+    "beats_shuffled_network_null": "FSS R2 improves by >= 0.02 over edge-weight shuffled null",
+    "critical_point_seed_stable": "SD(g_c across N x seed) <= 0.15"
+  },
+  "falsification_rule": "Failure of multiple structural gates means the UEID v3.6 geometric nonequilibrium critical-scaling extension is not supported by this pilot and must not be promoted to a confirmatory claim."
+}
