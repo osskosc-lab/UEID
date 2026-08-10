@@ -1,0 +1,38 @@
+{
+  "study": "Market-UEID v0.1 falsification pilot",
+  "status": "frozen-before-market-run",
+  "primary_market": "S&P 500",
+  "network_source": "Kenneth French 30 Industry Portfolios Daily",
+  "start_date": "1990-01-01",
+  "feature_frequency": "every 5 trading days",
+  "rolling_window_days": 126,
+  "susceptibility_history_points": 26,
+  "crisis_label": "forward 21-trading-day maximum drawdown <= -8%",
+  "splits": {
+    "train": "1990-01-01/2004-12-31",
+    "validation": "2005-01-01/2014-12-31",
+    "test": "2015-01-01/latest"
+  },
+  "models": {
+    "vol_only": ["rv20", "vix"],
+    "node_only": ["rv20", "vix", "r_node"],
+    "ueid_lite": ["rv20", "vix", "r_node", "r_edge", "r_geo", "d_info", "principal_chi"],
+    "ueid_null": ["rv20", "vix", "r_node", "r_edge_null", "r_geo_null", "d_info_null", "principal_chi_null"]
+  },
+  "primary_metric": "test ROC-AUC",
+  "secondary_metrics": ["PR-AUC", "Brier score", "recall at 5% alert budget", "precision at 5% alert budget", "false alerts/year"],
+  "gates": {
+    "G0_data": ">=25 industry portfolios and usable market data beginning no later than 1991-01-01",
+    "G1_incremental_auc": "AUC(UEID-lite) - AUC(node-only) >= 0.02",
+    "G2_null_exclusion": "AUC(UEID-lite) - AUC(UEID-null) >= 0.02",
+    "G3_dimension_signal": "standardized d_info difference on pre-crisis labels <= -0.20",
+    "G4_alert_recall": "recall@5%(UEID-lite) - recall@5%(node-only) >= 0.10",
+    "G5_era_stability": "UEID-lite AUC increment over node-only is positive in >=2 defined test eras"
+  },
+  "decision_rule": "SUPPORTED only if G0, G1, G2 and G4 pass; G3/G5 are mechanistic/stability support gates. Otherwise NOT SUPPORTED IN PILOT.",
+  "explicit_exclusions": [
+    "NESS correction is excluded because UEID v3.6 synthetic pilot failed its preregistered NESS gate.",
+    "No claim of physical universality or literal finite-size scaling is made for markets.",
+    "Industry portfolios are used to reduce constituent survivorship bias; this remains a market pilot, not a trading strategy validation."
+  ]
+}
