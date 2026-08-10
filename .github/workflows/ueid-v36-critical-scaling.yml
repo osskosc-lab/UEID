@@ -1,0 +1,35 @@
+name: UEID v3.6 Critical Scaling Pilot
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experiment/ueid-v3.6-critical-scaling-v0.1
+    paths:
+      - 'UEID-v3.6/**'
+      - 'requirements.txt'
+      - '.github/workflows/ueid-v36-critical-scaling.yml'
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run UEID v3.6 falsification pilot
+        working-directory: UEID-v3.6
+        run: python run_ueid_v36.py --out ../results
+      - name: Print frozen decision
+        run: cat results/ueid_v36_pilot_summary.json
+      - name: Upload reproducibility artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ueid-v36-critical-scaling-pilot
+          path: results/
+          if-no-files-found: error
