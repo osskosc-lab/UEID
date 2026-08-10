@@ -8,6 +8,12 @@ on:
     paths:
       - 'Market-UEID/**'
       - '.github/workflows/market-ueid-v01.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Market-UEID/**'
+      - '.github/workflows/market-ueid-v01.yml'
 
 jobs:
   market-pilot:
