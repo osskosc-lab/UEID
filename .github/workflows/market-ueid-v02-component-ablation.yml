@@ -9,6 +9,13 @@ on:
       - 'Market-UEID/**'
       - 'Market-UEID-Phase2/**'
       - '.github/workflows/market-ueid-v02-component-ablation.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Market-UEID/**'
+      - 'Market-UEID-Phase2/**'
+      - '.github/workflows/market-ueid-v02-component-ablation.yml'
 
 jobs:
   component-ablation:
