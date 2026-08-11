@@ -1,0 +1,67 @@
+{
+  "study_id": "Market-UEID-v0.2-component-ablation",
+  "frozen_on": "2026-08-11",
+  "status": "preregistered-before-execution",
+  "objective": "Test whether any single UEID-derived diagnostic adds out-of-sample crisis discrimination beyond the surviving volatility-plus-market-synchronization baseline, without relying on the failed full UEID-lite bundle.",
+  "data": {
+    "network_panel": "Kenneth French 30 Industry Portfolios Daily",
+    "market": "S&P 500; VIX when available",
+    "start": "1990-01-01",
+    "train_end": "2004-12-31",
+    "validation_end": "2014-12-31",
+    "test": "2015-01-01 through latest common date",
+    "network_window_days": 126,
+    "sampling_step_days": 5
+  },
+  "outcome": {
+    "label": "forward 21 trading day maximum drawdown <= -8%",
+    "primary_metric": "ROC-AUC on frozen 2015-latest test set",
+    "secondary_metrics": ["PR-AUC", "Brier score", "recall and precision under validation-calibrated 5% alert budget"]
+  },
+  "baseline": ["20-day realized volatility", "VIX if sufficiently observed", "r_node mean cross-industry correlation"],
+  "candidate_additions": {
+    "r_edge": "spectral concentration of thresholded correlation network",
+    "r_geo": "AF3 geometry score",
+    "d_info": "low-Laplacian spectral information dimension",
+    "principal_chi": "rolling maximum eigenvalue of N*Cov(r_node,r_edge,r_geo)"
+  },
+  "matched_nulls": {
+    "r_edge": "r_edge_null",
+    "r_geo": "r_geo_null",
+    "d_info": "d_info_null",
+    "principal_chi": "principal_chi_null"
+  },
+  "models": [
+    "vol_only",
+    "node_only",
+    "node_plus_edge",
+    "node_plus_af3",
+    "node_plus_dinfo",
+    "node_plus_chi",
+    "node_plus_edge_null",
+    "node_plus_af3_null",
+    "node_plus_dinfo_null",
+    "node_plus_chi_null",
+    "full_ueid_reference"
+  ],
+  "falsification": {
+    "familywise_candidates": 4,
+    "bootstrap": "moving-block bootstrap, block length 12 sampled feature rows, 1000 replicates",
+    "familywise_ci": "98.75% two-sided CI for candidate-minus-node AUC delta (Bonferroni alpha=0.05/4)",
+    "candidate_survival_rule": [
+      "test AUC delta versus node_only >= 0.02",
+      "98.75% bootstrap CI lower bound for AUC delta > 0",
+      "test AUC delta versus its matched null >= 0.01",
+      "candidate-minus-node AUC is positive in at least 2 of 3 frozen eras: 2015-2019, 2020-2022, 2023-latest"
+    ],
+    "global_decision": "SUPPORTED COMPONENT if one or more candidates meet all candidate survival rules; otherwise NO INCREMENTAL UEID COMPONENT SURVIVES",
+    "alert_rule": "calibrate probability threshold on validation predictions to target top 5% alerts, then apply that fixed threshold to test predictions"
+  },
+  "constraints": [
+    "No test-set hyperparameter tuning",
+    "No selecting a candidate on test performance and refitting",
+    "Full UEID model is reference-only and cannot rescue a failed component-wise decision",
+    "NESS remains excluded because the synthetic UEID v3.6 pilot failed its NESS gate",
+    "This experiment tests predictive increment, not proof of a physical market phase transition or trading profitability"
+  ]
+}

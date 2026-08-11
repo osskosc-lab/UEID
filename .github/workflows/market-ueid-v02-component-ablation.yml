@@ -1,0 +1,49 @@
+name: Market-UEID v0.2 Component Ablation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experiment/market-ueid-v0.2-component-ablation
+    paths:
+      - 'Market-UEID/**'
+      - 'Market-UEID-Phase2/**'
+      - '.github/workflows/market-ueid-v02-component-ablation.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Market-UEID/**'
+      - 'Market-UEID-Phase2/**'
+      - '.github/workflows/market-ueid-v02-component-ablation.yml'
+
+jobs:
+  component-ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas scipy scikit-learn networkx matplotlib reportlab requests yfinance
+      - name: Freeze preregistration checksum
+        run: |
+          sha256sum Market-UEID-Phase2/preregistration.json | tee Market-UEID-Phase2/preregistration.sha256
+          cat Market-UEID-Phase2/preregistration.json
+      - name: Run component-wise falsification
+        run: python Market-UEID-Phase2/run_component_ablation.py
+      - name: Print frozen decision
+        run: cat results/market_ueid_v02_component_ablation/decision.json
+      - name: Upload result artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-ueid-v02-component-ablation-results
+          path: |
+            results/market_ueid_v02_component_ablation/
+            Market-UEID-Phase2/preregistration.json
+            Market-UEID-Phase2/preregistration.sha256
+          if-no-files-found: error
